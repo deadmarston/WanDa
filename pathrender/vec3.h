@@ -38,10 +38,12 @@ public:
 
 inline std::istream& operator>> (std::istream &is, vec3 &t) {
 	is >> t.v[0] >> t.v[1] >> t.v[2];
+	return is;
 }
 
 inline std::ostream& operator<<(std::ostream &os, const vec3 &t) {
-	os << t.v[0] << t.v[1] << t.v[2];
+	os << t.v[0] << " " << t.v[1] << " " << t.v[2];
+	return os;
 }
 
 inline void vec3::make_unit_vector() {
@@ -60,7 +62,7 @@ inline vec3 operator-(const vec3 &v1, const vec3 &v2) {
 }
 
 inline vec3 operator*(const vec3 &v1, const vec3 &v2) {
-	return vec3(v1.v[0] * v2.v[0], v1.v[1] * v2.v[1], v2.v[2] * v2.v[2]);
+	return vec3(v1.v[0] * v2.v[0], v1.v[1] * v2.v[1], v1.v[2] * v2.v[2]);
 }
 
 inline vec3 operator/(const vec3 &v1, const vec3 &v2) {
@@ -95,34 +97,40 @@ inline vec3& vec3::operator+=(const vec3 &v2) {
 	v[0] += v2.v[0];
 	v[1] += v2.v[1];
 	v[2] += v2.v[2];
+	return *this;
 }
 
 inline vec3& vec3::operator-=(const vec3 &v2) {
 	v[0] -= v2.v[0];
 	v[1] -= v2.v[1];
 	v[2] -= v2.v[2];
+	return *this;
 }
 
 inline vec3& vec3::operator*=(const vec3 &v2) {
 	v[0] *= v2.v[0];
 	v[1] *= v2.v[1];
 	v[2] *= v2.v[2];
+	return *this;
 }
 
 inline vec3& vec3::operator/=(const vec3 &v2) {
 	v[0] /= v2.v[0];
 	v[1] /= v2.v[1];
 	v[2] /= v2.v[2];
+	return *this;
 }
 
 inline vec3& vec3::operator*=(const float f) {
 	v[0] *= f;
 	v[1] *= f;
 	v[2] *= f;
+	return *this;
 }
 
 inline vec3& vec3::operator/=(const float f) {
 	v[0] /= f;
 	v[1] /= f;
 	v[2] /= f;
+	return *this;
 }
