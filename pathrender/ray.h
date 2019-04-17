@@ -48,3 +48,11 @@ vec3 random_in_unit_sphere() {
 	} while (p.square_length() >= 1.0);
 	return p;
 }
+
+vec3 random_in_unit_disk() {
+	vec3 p;
+	do {
+		p = 2 * (vec3(random_func(), random_func(), 0) - vec3(1.0, 1.0, 0));
+	} while (p.square_length() >= 1.0);
+	return p;
+}

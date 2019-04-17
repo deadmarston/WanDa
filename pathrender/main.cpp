@@ -39,7 +39,6 @@ vec3 color(const ray& r, hitable* world, int depth) {//a kind of shader in our p
 int main()
 {
 	test_vec3();
-
 	//a hello world demo
 
 	//come on, let's begin with a simple ray tracer demo
@@ -64,29 +63,29 @@ int main()
 	//a header for pmm file
 	ofs << "P3\n" << nx << " " << ny << "\n255\n";
 		 
-	vec3 origin = vec3(0, 0, 0);
-	vec3 begin = vec3(-2, -1, -1);
-	vec3 horrizontal = vec3(4, 0, 0);
-	vec3 vertical = vec3(0, 2, 0);
-	camera cam = camera(origin, begin, horrizontal, vertical);
+	vec3 lookfrom = vec3(3, 3, 2);
+	vec3 lookat = vec3(0, 0, -1);
+	vec3 up_vector = vec3(0, 1, 0);
+	float fov = 20;	
 
-	hitable* list[4];
+	float aperture = 2.0;
+
+	camera cam = camera(lookfrom, lookat, up_vector, fov, float(nx) / float(ny), aperture, (lookat-lookfrom).length());
+
+	hitable* list[5];
 	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
 	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
 	list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
 	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectirc(1.5));
-	//list[4] = new sphere(vec3(-1, 0, -1), 0.45, new dielectirc(1.5));
+	list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectirc(1.5));
 
-	hitable_list* world = new hitable_list(list, 4);
+	hitable_list* world = new hitable_list(list, 5);
 
 	for (int j = ny-1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
 
 			vec3 col = vec3(0, 0, 0);
 			for (int s = 0; s < ns; s++) {
-				//random engine?
-				//default_random_engine e;
-				//uniform_real_distribution<float> uni(0, 0.999999999999999);
 
 				float v = float(j + random_func()) / ny;
 				float u = float(i + random_func()) / nx;
