@@ -11,7 +11,14 @@ public:
 
 	hitable** list;
 	int sizeOfList;
+
+	//todo:
+	//serialize the data of objects, try to reuse it in next time
+	//void serialization(ofstream& ofs) const;
+	//void deserialization(ifstream& ifs);
 };
+
+
 
 bool hitable_list::hit(const ray &r, float t_min, float t_max, hit_record &rec) const{
 	bool hitAnything = false;

@@ -36,6 +36,37 @@ vec3 color(const ray& r, hitable* world, int depth) {//a kind of shader in our p
 }
 
 
+hitable_list* random_scene() {
+	int n = 500;
+	hitable** list = new hitable*[n + 1];
+	list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
+
+	int i = 1;
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			float choose_mat = random_func();
+			vec3 center(a + 0.9 * random_func(), 0.2, b + 0.9*random_func());
+			if ((center - vec3(4.0, 0.2, 0)).length() > 0.9) {
+				if (choose_mat < 0.8) {//diffuse
+					list[i++] = new sphere(center, 0.2, new lambertian(vec3(random_func()*random_func(), random_func()*random_func(), random_func()*random_func())));
+				}
+				else if (choose_mat < 0.95) {//metal
+					list[i++] = new sphere(center, 0.2, new metal(vec3(0.5*(1 + random_func()), 0.5*(1 + random_func()), 0.5*(1 + random_func())), 0.5*random_func()));
+				}
+				else {//glass
+					list[i++] = new sphere(center, 0.2, new dielectirc(1.5));
+				}
+			}
+		}
+	}
+
+	list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectirc(1.5));
+	list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+	list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new hitable_list(list, i);
+}
+
 int main()
 {
 	test_vec3();
@@ -48,7 +79,7 @@ int main()
 
 	int nx = 200;
 	int ny = 100;
-	int ns = 100;
+	int ns = 300;
 	/*
 	 #######800######
 	 6###############
@@ -63,23 +94,24 @@ int main()
 	//a header for pmm file
 	ofs << "P3\n" << nx << " " << ny << "\n255\n";
 		 
-	vec3 lookfrom = vec3(3, 3, 2);
-	vec3 lookat = vec3(0, 0, -1);
+	vec3 lookfrom = vec3(13, 2, 3);
+	vec3 lookat = vec3(0, 0, 0);
 	vec3 up_vector = vec3(0, 1, 0);
 	float fov = 20;	
 
-	float aperture = 2.0;
+	float aperture = 0.1;
 
-	camera cam = camera(lookfrom, lookat, up_vector, fov, float(nx) / float(ny), aperture, (lookat-lookfrom).length());
+	camera cam = camera(lookfrom, lookat, up_vector, fov, float(nx) / float(ny), aperture, 10);
 
-	hitable* list[5];
-	list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
-	list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-	list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
-	list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectirc(1.5));
-	list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectirc(1.5));
+	//hitable* list[5];
+	//list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
+	//list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
+	//list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0.3));
+	//list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectirc(1.5));
+	//list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectirc(1.5));
 
-	hitable_list* world = new hitable_list(list, 5);
+	hitable_list* world = random_scene();
+	//todo: serialization
 
 	for (int j = ny-1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
