@@ -8,6 +8,9 @@
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
+
+#include "testJson.h"
+
 using namespace std;
 
 //todo: design a test suite for vec3
@@ -48,7 +51,7 @@ hitable_list* random_scene() {
 			vec3 center(a + 0.9 * random_func(), 0.2, b + 0.9*random_func());
 			if ((center - vec3(4.0, 0.2, 0)).length() > 0.9) {
 				if (choose_mat < 0.8) {//diffuse
-					list[i++] = new sphere(center, 0.2, new lambertian(vec3(random_func()*random_func(), random_func()*random_func(), random_func()*random_func())));
+					list[i++] = new moving_sphere(center, center+vec3(0, 0.5*random_func(), 0),0, 1.0, 0.2, new lambertian(vec3(random_func()*random_func(), random_func()*random_func(), random_func()*random_func())));
 				}
 				else if (choose_mat < 0.95) {//metal
 					list[i++] = new sphere(center, 0.2, new metal(vec3(0.5*(1 + random_func()), 0.5*(1 + random_func()), 0.5*(1 + random_func())), 0.5*random_func()));
@@ -69,8 +72,10 @@ hitable_list* random_scene() {
 
 int main()
 {
-	test_vec3();
-	//a hello world demo
+	//this is for test of json
+	//test_main();
+	//system("pause");
+
 
 	//come on, let's begin with a simple ray tracer demo
 
@@ -79,7 +84,7 @@ int main()
 
 	int nx = 200;
 	int ny = 100;
-	int ns = 300;
+	int ns = 10;
 	/*
 	 #######800######
 	 6###############
@@ -99,9 +104,10 @@ int main()
 	vec3 up_vector = vec3(0, 1, 0);
 	float fov = 20;	
 
-	float aperture = 0.1;
+	float aperture = 0.0;
+	float dist_to_focus = 10;
 
-	camera cam = camera(lookfrom, lookat, up_vector, fov, float(nx) / float(ny), aperture, 10);
+	camera cam = camera(lookfrom, lookat, up_vector, fov, float(nx) / float(ny), aperture, dist_to_focus, 0.0, 1.0);
 
 	//hitable* list[5];
 	//list[0] = new sphere(vec3(0, 0, -1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
@@ -115,6 +121,7 @@ int main()
 
 	for (int j = ny-1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
+			cout << j << " " << i << endl;
 
 			vec3 col = vec3(0, 0, 0);
 			for (int s = 0; s < ns; s++) {

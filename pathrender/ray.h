@@ -4,14 +4,16 @@
 class ray {
 public:
 	ray() {};
-	ray(const vec3& A, const vec3& B) { a = A; b = B; };
+	ray(const vec3& A, const vec3& B, float t = 0.0) { a = A; b = B; _time = t; };
 
 	vec3 origin() const { return a; };
 	vec3 direction() const { return b; }
+	float time() const { return _time; }
 	vec3 point_at_parameter(float t) const { return a + t*b; };
 
 	vec3 a;
 	vec3 b;
+	float _time;
 };
 
 float schlick(float cosine, float ref_idx){

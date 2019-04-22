@@ -11,6 +11,8 @@ public:
 	vec3 vertical;
 	vec3 u, v, w;
 
+	//add for motion blur
+	float time0, time1;
 
 	float lens_radius;
 
@@ -26,7 +28,11 @@ public:
 		horizontal = vec3(width * 2, 0, 0);
 		vertical = vec3(0, height * 2, 0);
 	};*/
-	camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect, float aperture, float focus_dist) {
+	camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect, float aperture, float focus_dist, float t0, float t1) {
+		//add for motion blur
+		time0 = t0;
+		time1 = t1;
+		
 		lens_radius = aperture / 2;
 
 		float theta = vfov * M_PI / 180;
@@ -50,5 +56,6 @@ public:
 ray camera::get_ray(float s, float t) {
 	vec3 rd = lens_radius * random_in_unit_disk();
 	vec3 offset = u*rd.x() + v*rd.y();
-	return ray(origin + offset, left_down_point + s * horizontal + t*vertical -origin - offset);
+	float time = time0 + random_func() * (time1 - time0);
+	return ray(origin + offset, left_down_point + s * horizontal + t*vertical -origin - offset, time);
 }
