@@ -8,10 +8,36 @@
 #include "sphere.h"
 #include "camera.h"
 #include "material.h"
+#include "bvh.h"
 
 #include "testJson.h"
 
 using namespace std;
+
+/*
+				may alumni bless you
+
+		$$$$$$$$$$$$$$$      $$$$$$$$$$$$$$$%.
+	&$               &$    =$                $
+	$                $$$$$$=                 @&
+B=$$                 $$$$$$                   $$&=
+$$$$      +1s        $$&-$$       +1s         $$$
+$$$$                 $-   $                   $$$
+   $                 $    $                  .B
+   $                 @    $                 .=
+	$                $     $                %
+	 $            =$         =$           @&
+	  #$$$$$$$$$%              -@$$$$$$$$B
+
+				莫生        莫生
+				气         气
+
+				代码辣鸡非我意,
+				自己动手分田地;
+				你若气死谁如意?
+				谈笑风生活长命.
+
+*/
 
 //todo: design a test suite for vec3
 void test_vec3() {// a tests suite for vec3
@@ -39,7 +65,7 @@ vec3 color(const ray& r, hitable* world, int depth) {//a kind of shader in our p
 }
 
 
-hitable_list* random_scene() {
+hitable* random_scene() {
 	int n = 500;
 	hitable** list = new hitable*[n + 1];
 	list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
@@ -52,6 +78,7 @@ hitable_list* random_scene() {
 			if ((center - vec3(4.0, 0.2, 0)).length() > 0.9) {
 				if (choose_mat < 0.8) {//diffuse
 					list[i++] = new moving_sphere(center, center+vec3(0, 0.5*random_func(), 0),0, 1.0, 0.2, new lambertian(vec3(random_func()*random_func(), random_func()*random_func(), random_func()*random_func())));
+					//list[i++] = new sphere(center, 0.2, new lambertian(vec3(random_func()*random_func(), random_func()*random_func(), random_func()*random_func())));
 				}
 				else if (choose_mat < 0.95) {//metal
 					list[i++] = new sphere(center, 0.2, new metal(vec3(0.5*(1 + random_func()), 0.5*(1 + random_func()), 0.5*(1 + random_func())), 0.5*random_func()));
@@ -67,7 +94,7 @@ hitable_list* random_scene() {
 	list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
 	list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
-	return new hitable_list(list, i);
+	return new bvh_node(list, i, 0.0, 0.0);
 }
 
 int main()
@@ -79,12 +106,18 @@ int main()
 
 	//come on, let's begin with a simple ray tracer demo
 
+	time_t timer1;
+	time_t timer2;
+
+	double seconds;
+	time(&timer1);
+
 	//for a random
 	srand(unsigned(time(NULL)));
 
 	int nx = 200;
 	int ny = 100;
-	int ns = 10;
+	int ns = 100;
 	/*
 	 #######800######
 	 6###############
@@ -116,12 +149,12 @@ int main()
 	//list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectirc(1.5));
 	//list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectirc(1.5));
 
-	hitable_list* world = random_scene();
+	hitable* world = random_scene();
 	//todo: serialization
 
 	for (int j = ny-1; j >= 0; j--) {
 		for (int i = 0; i < nx; i++) {
-			cout << j << " " << i << endl;
+			//cout << j << " " << i << endl;
 
 			vec3 col = vec3(0, 0, 0);
 			for (int s = 0; s < ns; s++) {
@@ -145,6 +178,10 @@ int main()
 	}
 
 	ofs.close();
+
+	time(&timer2);
+	seconds = difftime(timer2, timer1);
+	cout << "elcapsed: " << seconds << endl;
 
 	system("pause");
 }

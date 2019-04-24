@@ -8,7 +8,7 @@ public:
 	hitable_list(hitable** li, int size) : list(li), sizeOfList(size){};
 
 	virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const;
-
+	virtual bool bounding_box(float t0, float t1, aabb& box) const;
 	hitable** list;
 	int sizeOfList;
 
@@ -34,4 +34,9 @@ bool hitable_list::hit(const ray &r, float t_min, float t_max, hit_record &rec) 
 		}
 	}
 	return hitAnything;
+}
+
+bool hitable_list::bounding_box(float t0, float t1, aabb& box) const {
+	//todo:
+	return true;
 }
