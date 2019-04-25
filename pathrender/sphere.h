@@ -1,5 +1,6 @@
 #pragma once
 #include "hitable.h"
+#include "texture.h"
 
 class sphere : public hitable {
 public:
@@ -34,6 +35,7 @@ bool sphere::hit(const ray &r, float t_min, float t_max, hit_record &rec) const{
 		if (temp < t_max && t_min < temp) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(temp);
+			get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
 			rec.normal = vec3(rec.p - center)/radius;
 			return true;
 		}
@@ -41,6 +43,7 @@ bool sphere::hit(const ray &r, float t_min, float t_max, hit_record &rec) const{
 		if (temp < t_max && t_min < temp) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(temp);
+			get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
 			rec.normal = vec3(rec.p - center) / radius;
 			return true;
 		}
@@ -86,6 +89,7 @@ bool moving_sphere::hit(const ray &r, float t_min, float t_max, hit_record &rec)
 		if (temp < t_max && t_min < temp) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(temp);
+			get_sphere_uv((rec.p - center(r.time()))/ radius, rec.u, rec.v);
 			rec.normal = vec3(rec.p - center(r.time())) / radius;
 			return true;
 		}
@@ -93,6 +97,7 @@ bool moving_sphere::hit(const ray &r, float t_min, float t_max, hit_record &rec)
 		if (temp < t_max && t_min < temp) {
 			rec.t = temp;
 			rec.p = r.point_at_parameter(temp);
+			get_sphere_uv((rec.p - center(r.time()))/ radius, rec.u, rec.v);
 			rec.normal = vec3(rec.p - center(r.time())) / radius;
 			return true;
 		}

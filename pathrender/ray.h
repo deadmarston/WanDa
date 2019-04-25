@@ -1,5 +1,6 @@
 #pragma once
 #include "vec3.h"
+#include <stdlib.h>
 
 class ray {
 public:
@@ -39,8 +40,8 @@ bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {
 	}
 }
 
-float random_func(int precision = 10000, bool leftIncluded = false) {
-	return (rand() % (precision + (leftIncluded ? 1 : 0))) / float(precision);
+float random_func(int precision = 10000, bool rightIncluded = false) {
+	return (rand() % (precision + (rightIncluded ? 1 : 0))) / float(precision);
 }
 
 vec3 random_in_unit_sphere() {
