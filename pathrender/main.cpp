@@ -11,6 +11,7 @@
 #include "material.h"
 #include "bvh.h"
 #include "texture.h"
+#include "rect.h"
 
 #include "testJson.h"
 
@@ -55,17 +56,19 @@ vec3 color(const ray& r, hitable* world, int depth) {//a kind of shader in our p
 	if (world->hit(r, 0.001, FLT_MAX, rec)) {
 		ray scattered;
 		vec3 attenuation;
+		vec3 emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
 		if (depth < 50 && rec.mat_ptr->scatter(r, rec, attenuation, scattered)) {
-			return attenuation*color(scattered, world, depth + 1);
+			return emitted + attenuation*color(scattered, world, depth + 1);
 		}
 		else {
-			return vec3(0, 0, 0);
+			return emitted;
 		}
 	}
 	else {
-		vec3 unit = unit_vector(r.direction());
+		/*vec3 unit = unit_vector(r.direction());
 		float t = 0.5*(unit.y() + 1.0);
-		return t * vec3(0.5, 0.7, 1.0) + (1 - t) * vec3(1.0, 1.0, 1.0);
+		return t * vec3(0.5, 0.7, 1.0) + (1 - t) * vec3(1.0, 1.0, 1.0);*/
+		return vec3(0.0, 0.0, 0.0);
 	}
 }
 
@@ -131,6 +134,35 @@ hitable *earth() {
 	return new sphere(vec3(0, 0, 0), 2, mat);
 }
 
+hitable* simple_light() {
+	texture *pertext = new noise_texture(4);
+	hitable **list = new hitable*[4];
+	list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(pertext));
+	list[1] = new sphere(vec3(0, 2, 0), 2, new lambertian(pertext));
+	list[2] = new sphere(vec3(0, 7, 0), 2, new diffuse_light(new constant_texture(vec3(4, 4, 4))));
+	list[3] = new xy_rect(3, 5, 1, 3, -2, new diffuse_light(new constant_texture(vec3(4, 4, 4))));
+	return new hitable_list(list, 4);
+}
+
+hitable *cornell_box() {
+	hitable **list = new hitable*[8];
+	int i = 0;
+	material *red = new lambertian(new constant_texture(vec3(0.65, 0.05, 0.05)));
+	material *white = new lambertian(new constant_texture(vec3(0.73, 0.73, 0.73)));
+	material *green = new lambertian(new constant_texture(vec3(0.12, 0.45, 0.15)));
+	material *light = new diffuse_light(new constant_texture(vec3(15, 15, 15)));
+	list[i++] = new flip_normals(new yz_rect(0, 555, 0, 555, 555, green));
+	list[i++] = new yz_rect(0, 555, 0, 555, 0, red);
+	list[i++] = new xz_rect(213, 343, 227, 332, 554, light);
+	list[i++] = new flip_normals(new xz_rect(0, 555, 0, 555, 555, white));
+	list[i++] = new xz_rect(0, 555, 0, 555, 0, white);
+	list[i++] = new flip_normals(new xy_rect(0, 555, 0, 555, 555, white));
+	return new hitable_list(list, i);
+
+	return new hitable_list(list, i);
+}
+
+
 int main()
 {
 	//this is for test of json
@@ -150,7 +182,7 @@ int main()
 	//for a random
 	int nx = 200;
 	int ny = 100;
-	int ns = 10;
+	int ns = 100;
 	/*
 	 #######800######
 	 6###############
@@ -165,10 +197,10 @@ int main()
 	//a header for pmm file
 	ofs << "P3\n" << nx << " " << ny << "\n255\n";
 		 
-	vec3 lookfrom = vec3(13, 2, 3);
-	vec3 lookat = vec3(0, 0, 0);
+	vec3 lookfrom = vec3(278, 278, -800);
+	vec3 lookat = vec3(278, 278, 0);
 	vec3 up_vector = vec3(0, 1, 0);
-	float fov = 20;	
+	float fov = 40;	
 
 	float aperture = 0.0;
 	float dist_to_focus = 10;
@@ -182,7 +214,7 @@ int main()
 	//list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectirc(1.5));
 	//list[4] = new sphere(vec3(-1, 0, -1), -0.45, new dielectirc(1.5));
 	//hitable* world = two_spheres();
-	hitable* world = earth();
+	hitable* world = cornell_box();
 	//hitable* world = random_scene();
 	//todo: serialization
 
