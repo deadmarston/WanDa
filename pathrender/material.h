@@ -39,9 +39,9 @@ public:
 	float fuzz;
 };
 
-class dielectirc : public material {
+class dielectric : public material {
 public:
-	dielectirc(float ri) :ref_idx(ri) {};
+	dielectric(float ri) :ref_idx(ri) {};
 	virtual bool scatter(const ray& r, const hit_record& rec, vec3& attenuation, ray& scattered) const {
 		vec3 outward_normal;
 		vec3 reflected = reflect(r.direction(), rec.normal);

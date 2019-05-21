@@ -77,5 +77,8 @@
     <ClInclude Include="box.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="volume.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
