@@ -183,7 +183,7 @@ int main()
 	//for a random
 	int nx = 200;
 	int ny = 100;
-	int ns = 100;
+	int ns = 10;
 	/*
 	 #######800######
 	 6###############
